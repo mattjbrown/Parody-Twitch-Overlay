@@ -1,0 +1,156 @@
+<img src="teepo.png" style="display: none;" />
+<img src="mayuri.png" style="display: none;" />
+<img src="trihard.png" style="display: none;" />
+<img src="joshua.png" style="display: none;" />
+<img src="garbo.png" style="display: none;" />
+<img src="beato.png" style="display: none;" />
+<img src="milla.png" style="display: none;" />
+<img src="talonflame.png" style="display: none;" />
+<img src="vc.png" style="display: none;" />
+<img src="toriel.gif" style="display: none;" />
+<img src="dollars.png" style="display: none;" />
+<img src="bobross.gif" style="display: none;" />
+<img src="shizuru.png" style="display: none;" />
+<img src="kickstarter.png" style="display: none;" />
+<img src="stallman.png" style="display: none;" />
+
+<audio style="display: none;">
+    <source src="ahahaha.mp3" type="audio/mpeg">
+</audio>
+<audio style="display: none;">
+    <source src="diafraaamps.mp3" type="audio/mpeg">
+</audio>
+<audio style="display: none;">
+    <source src="readumineko.mp3" type="audio/mpeg">
+</audio>
+<audio style="display: none;">
+    <source src="tuturu.mp3" type="audio/mpeg">
+</audio>
+<audio style="display: none;">
+    <source src="wheresjoshua.mp3" type="audio/mpeg">
+</audio>
+<audio style="display: none;">
+    <source src="overrated.mp3" type="audio/mpeg">
+</audio>
+<audio style="display: none;">
+    <source src="catforbat.mp3" type="audio/mpeg">
+</audio>
+<audio style="display: none;">
+    <source src="wondermoney.mp3" type="audio/mpeg">
+</audio>
+<audio style="display: none;">
+    <source src="ultra kill.mp3" type="audio/mpeg">
+</audio>
+<audio style="display: none;">
+    <source src="wednesday.mp3" type="audio/mpeg">
+</audio>
+<audio style="display: none;">
+    <source src="thanks.mp3" type="audio/mpeg">
+</audio>
+<audio style="display: none;">
+    <source src="donatanoko.mp3" type="audio/mpeg">
+</audio>
+<audio style="display: none;">
+    <source src="pcorn.mp3" type="audio/mpeg">
+</audio>
+<audio style="display: none;">
+    <source src="scrawww.mp3" type="audio/mpeg">
+</audio>
+<audio style="display: none;">
+    <source src="announce.mp3" type="audio/mpeg">
+</audio>
+<audio style="display: none;">
+    <source src="whoisq.mp3" type="audio/mpeg">
+</audio>
+
+
+<canvas id="overLayer" width="1280" height="720" style="position:absolute; left:0px; top: 0px; z-index: 3">
+</canvas>
+<canvas id="overLayerScroll" width="640" height="720" style="position:absolute; left:640px; top: 0px; z-index: 4">
+</canvas>
+<canvas id="train" width="1280" height="720" style="position:absolute; left:0px; top: 0px; z-index: 2">
+</canvas>
+<canvas id="notifications" width="1280" height="720" style="position:absolute; left:0px; top: 0px; z-index: 1">
+</canvas>
+
+<script src="http://cdn.tmijs.org/js/0.0.24/tmi.js"></script>
+<script src="http://underscorejs.org/underscore-min.js"></script>
+<script src='https://code.responsivevoice.org/responsivevoice.js'></script>
+<script src="utilities.js"></script>
+<script src="funnyNameMaker.js"></script>
+<script src="funnyGroupMaker.js"></script>
+<script src="drawHUD.js"></script>
+<script src="showNotification.js"></script>
+<script src="twitchChatIntegration.js"></script>
+<script>
+var canvasSizeX = 1280;
+var canvasSizeY = 720;
+
+var donationList = [];
+var subscriberList = [];
+var followerList = [];
+var commandQueue = [];
+var trainQueue = [];
+var poppedTrains = [];
+var crapOnScreen = false;
+var trainOnScreen = false;
+var timeSinceLastPopup = 0;
+var subTrainLength = 0;
+var lastMessage = "";
+var threshold = 300000;
+var trainThreshold = 10000;
+
+var overlay = document.getElementById("overLayer");
+var scrollOverlay = document.getElementById("overLayerScroll");
+var train = document.getElementById("train");
+var notifications = document.getElementById("notifications");
+
+var trainImg = new Image();
+trainImg.src = 'pika.gif';
+
+var trainAudio = new Audio();
+trainAudio.src = 'choo choo.mp3';
+trainAudio.mediaGroup = 'choo';
+
+var cancerBandit = new Audio();
+cancerBandit.src = 'cancerbandit.mp3';
+
+var followerGoal = 100;
+var subGoal = 50;
+
+var intervalDelay = 25;
+
+setInterval(function () {
+    showCrapAroundScreen(overlay, scrollOverlay);
+    if (!crapOnScreen && commandQueue[0]) {
+        crapOnScreen = true;
+        timeSinceLastPopup = 0;
+        var command = commandQueue.shift();
+        command.params.unshift(notifications);
+        command.params.splice(2, 0, function () {
+            crapOnScreen = false;
+        });
+        command.func.apply(this, command.params);
+        threshold = rng(30000, 90000);
+    }
+    if (!trainOnScreen && trainQueue[0]) {
+        trainOnScreen = true;
+        var trainSize = trainQueue.shift();
+        poppedTrains.push(trainSize);
+        showNotification(train, 1000, function () { trainOnScreen = false }, 
+            trainSize + " subscriber train!!!", 60, "", 30, null, trainAudio, trainImg);
+    }
+    if (!commandQueue[0] && timeSinceLastPopup > threshold) {
+        queueUpRandomCommand();
+        threshold = rng(30000, 90000);
+    }
+    subTrainLength = timeSinceLastPopup > trainThreshold ? 0 : subTrainLength;
+    poppedTrains = timeSinceLastPopup > trainThreshold ? [] : poppedTrains;
+    
+    if (subTrainLength > 2 && !_.contains(poppedTrains, subTrainLength) && !_.contains(trainQueue, subTrainLength)) {
+        trainQueue.push(subTrainLength);
+    }
+    
+    timeSinceLastPopup += intervalDelay;
+}, intervalDelay);
+</script>
