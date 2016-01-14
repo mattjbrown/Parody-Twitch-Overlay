@@ -71,10 +71,22 @@ function showNotification(canvas, showDuration, callback, firstLine, firstLineSi
     }
     
     setTimeout(function () {
-        if (message) {
+        if (message && !showYoutubeIfApplicable(message)) {
             responsiveVoice.speak(message, "US English Female", { volume: 0.4, rate: 0.9 });
         }
     }, 3000);
     
     var timeOnScreen = 0;
+}
+
+function showYoutubeIfApplicable(message) {
+    var video = urlParser.parse(message);
+    if (video && video.provider === 'youtube') {
+        var startSeconds = (video.params && video.params.start) ? video.params.start : 0;
+        playVideo(video.id, startSeconds);
+        return true;
+    }
+    else {
+        return false;
+    }
 }

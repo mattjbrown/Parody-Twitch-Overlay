@@ -15,6 +15,18 @@ var client = new irc.client(options);
 client.connect();
 
 client.on("chat", function (channel, user, message, self) {
+    if (user['display-name'] === 'IvanGPX' && message === 'stopvids') {
+        shouldPlay = false;
+        console.log('stopping vids');
+        return;
+    }
+    
+    if (user['display-name'] === 'IvanGPX' && message === 'startvids') {
+        shouldPlay = true;
+        console.log('starting vids');
+        return;
+    }
+    
     getCommandDetails(message);
 });
 

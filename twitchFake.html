@@ -63,7 +63,7 @@
     <source src="whoisq.mp3" type="audio/mpeg">
 </audio>
 
-
+<div id="player"></div>
 <canvas id="overLayer" width="1280" height="720" style="position:absolute; left:0px; top: 0px; z-index: 3">
 </canvas>
 <canvas id="overLayerScroll" width="640" height="720" style="position:absolute; left:640px; top: 0px; z-index: 4">
@@ -75,7 +75,8 @@
 
 <script src="http://cdn.tmijs.org/js/0.0.24/tmi.js"></script>
 <script src="http://underscorejs.org/underscore-min.js"></script>
-<script src='https://code.responsivevoice.org/responsivevoice.js'></script>
+<script src="https://code.responsivevoice.org/responsivevoice.js"></script>
+<script src="lib/jsVideoUrlParser.min.js"></script>
 <script src="utilities.js"></script>
 <script src="funnyNameMaker.js"></script>
 <script src="funnyGroupMaker.js"></script>
@@ -83,6 +84,59 @@
 <script src="showNotification.js"></script>
 <script src="twitchChatIntegration.js"></script>
 <script>
+var tag = document.createElement('script');
+
+tag.src = "https://www.youtube.com/iframe_api";
+var firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+var player;
+var iframe;
+function onYouTubeIframeAPIReady() {
+player = new YT.Player('player', {
+  height: '720',
+  width: '1280',
+  playerVars: { 'controls': 0, 'showinfo': 0 },
+  events: {
+    'onReady': onPlayerReady,
+    'onStateChange': onPlayerStateChange
+  }
+});
+iframe = document.getElementById('player');
+iframe.style.visibility = 'hidden';
+}
+
+function onPlayerReady(event) {
+    event.target.playVideo();
+}
+
+function onPlayerStateChange(event) {
+    console.log(event);
+    if (event.data === 2 || event.data === 0) {
+        iframe.style.visibility = 'hidden';
+    }
+}
+
+function playVideo(id, start) {
+    if (!shouldPlay) {
+        return;
+    }
+    
+    iframe.style.visibility = 'visible';
+    player.loadVideoById({
+        'videoId': id,
+        'startSeconds': start || 0,
+        'endSeconds': start ? start + 5 : 5
+    });
+    /*setTimeout(function() {
+        iframe.style.visibility = 'hidden';
+    }, 5500)*/
+}
+
+var shouldPlay = true;
+
+//---
+
 var canvasSizeX = 1280;
 var canvasSizeY = 720;
 
