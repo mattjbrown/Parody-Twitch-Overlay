@@ -73,7 +73,7 @@
 <canvas id="notifications" width="1280" height="720" style="position:absolute; left:0px; top: 0px; z-index: 1">
 </canvas>
 
-<script src="http://cdn.tmijs.org/js/0.0.24/tmi.js"></script>
+<script src="http://cdn.tmijs.org/js/latest/tmi.js"></script>
 <script src="http://underscorejs.org/underscore-min.js"></script>
 <script src="https://code.responsivevoice.org/responsivevoice.js"></script>
 <script src="lib/jsVideoUrlParser.min.js"></script>
@@ -111,7 +111,6 @@ function onPlayerReady(event) {
 }
 
 function onPlayerStateChange(event) {
-    console.log(event);
     if (event.data === 2 || event.data === 0) {
         iframe.style.visibility = 'hidden';
     }
